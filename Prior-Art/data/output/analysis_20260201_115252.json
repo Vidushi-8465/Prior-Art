@@ -1,0 +1,232 @@
+{
+  "input_metadata": {
+    "filename": "direct_input.txt",
+    "num_pages": 1,
+    "input_length": 1990
+  },
+  "analysis": {
+    "original_text": "One-Line Problem Statement Design and develop a technology-enabled safety, monitoring, and assistance system to protect sanitation workers of Solapur Municipal Corporation (SMC) from hazardous working conditions, reduce manual exposure to risks, and enhance dignity, safety, and operational efficiency. Context Sanitation workers of Solapur Municipal Corporation perform critical public health and hygiene functions under extremely challenging and hazardous conditions. Their daily responsibilities often involve exposure to extreme weather, entry into confined spaces such as manholes and sewer lines, handling blocked pipelines, and performing high-risk manual operations. These working conditions expose sanitation workers to severe health risks, including toxic gases, infections, structural failures, and accidental flooding. Despite their essential role, many sanitation operations continue to rely on manual processes with limited safety mechanisms or technology support. To promote worker dignity, life safety, and operational efficiency, SMC seeks innovative, practical, and scalable technology-driven solutions that can significantly reduce occupational risks and prevent loss of life or injury. \n\nProblem Description Solapur Municipal Corporation requires a comprehensive safety and support system to address the following challenges: 1. High Risk Due to Manual Exposure \u2022 Direct human entry into manholes and sewer lines. \u2022 Limited availability of mechanized or remote inspection tools. \u2022 Dependence on manual cleaning and maintenance operations. 2. Health and Life Safety Hazards \u2022 Exposure to toxic and explosive gases. \u2022 Risk of suffocation, infections, and long-term health issues. \u2022 Possibility of structural collapse or sudden flooding. 3. Lack of Real-Time Monitoring and Emergency Response \u2022 Absence of real-time gas detection and environmental monitoring. \u2022 No immediate alert mechanisms during emergencies. \u2022 Limited visibility for supervisors during field operations.",
+    "timestamp": "2026-02-01T11:52:46.612964",
+    "cleaned_text": "one line problem statement design and develop a technology enabled safety monitoring and assistance system to protect sanitation workers of solapur municipal corporation smc from hazardous working conditions reduce manual exposure to risks and enhance dignity safety and operational efficiency context sanitation workers of solapur municipal corporation perform critical public health and hygiene functions under extremely challenging and hazardous conditions their daily responsibilities often involve exposure to extreme weather entry into confined spaces such as manholes and sewer lines handling blocked pipelines and performing high risk manual operations these working conditions expose sanitation workers to severe health risks including toxic gases infections structural failures and accidental flooding despite their essential role many sanitation operations continue to rely on manual processes with limited safety mechanisms or technology support to promote worker dignity life safety and operational efficiency smc seeks innovative practical and scalable technology driven solutions that can significantly reduce occupational risks and prevent loss of life or injury problem description solapur municipal corporation requires a comprehensive safety and support system to address the following challenges high risk due to manual exposure direct human entry into manholes and sewer lines limited availability of mechanized or remote inspection tools dependence on manual cleaning and maintenance operations health and life safety hazards exposure to toxic and explosive gases risk of suffocation infections and long term health issues possibility of structural collapse or sudden flooding lack of real time monitoring and emergency response absence of real time gas detection and environmental monitoring no immediate alert mechanisms during emergencies limited visibility for supervisors during field operations",
+    "summary": "One-Line Problem Statement Design and develop a technology-enabled safety, monitoring, and assistance system to protect sanitation workers of Solapur Municipal Corporation (SMC) from hazardous working conditions, reduce manual exposure to risks, and enhance dignity, safety, and operational efficiency. Their daily responsibilities often involve exposure to extreme weather, entry into confined spaces such as manholes and sewer lines, handling blocked pipelines, and performing high-risk manual operations. To promote worker dignity, life safety, and operational efficiency, SMC seeks innovative, practical, and scalable technology-driven solutions that can significantly reduce occupational risks and prevent loss of life or injury.",
+    "keywords": {
+      "yake": [
+        [
+          "Solapur Municipal Corporation",
+          0.0006698702751607719
+        ],
+        [
+          "Problem Statement Design",
+          0.001636113105483494
+        ],
+        [
+          "One-Line Problem Statement",
+          0.004603418165078719
+        ],
+        [
+          "Statement Design",
+          0.004618914650008227
+        ],
+        [
+          "Solapur Municipal",
+          0.004952800491228452
+        ],
+        [
+          "Municipal Corporation",
+          0.005231630164286983
+        ],
+        [
+          "Description Solapur Municipal",
+          0.0061233525992429585
+        ],
+        [
+          "Municipal Corporation perform",
+          0.008033360818876466
+        ],
+        [
+          "Municipal Corporation requires",
+          0.012395988994881776
+        ],
+        [
+          "Design and develop",
+          0.013523775842343063
+        ]
+      ],
+      "rake": [
+        [
+          40.5,
+          "solapur municipal corporation perform critical public health"
+        ],
+        [
+          33.0,
+          "problem description solapur municipal corporation requires"
+        ],
+        [
+          26.56111111111111,
+          "manual exposure \u2022 direct human entry"
+        ],
+        [
+          24.75,
+          "daily responsibilities often involve exposure"
+        ],
+        [
+          19.750000000000004,
+          "working conditions expose sanitation workers"
+        ],
+        [
+          18.02777777777778,
+          "life safety hazards \u2022 exposure"
+        ],
+        [
+          17.0,
+          "line problem statement design"
+        ],
+        [
+          16.0,
+          "solapur municipal corporation"
+        ],
+        [
+          15.11111111111111,
+          "emergency response \u2022 absence"
+        ],
+        [
+          14.5,
+          "many sanitation operations continue"
+        ]
+      ],
+      "keybert": [
+        [
+          "sanitation workers solapur",
+          0.7013
+        ],
+        [
+          "sewer lines handling",
+          0.4666
+        ],
+        [
+          "smc hazardous working",
+          0.4611
+        ],
+        [
+          "comprehensive safety support",
+          0.4349
+        ],
+        [
+          "manual cleaning maintenance",
+          0.3737
+        ],
+        [
+          "municipal corporation requires",
+          0.3703
+        ],
+        [
+          "operations health life",
+          0.3661
+        ],
+        [
+          "human entry manholes",
+          0.321
+        ],
+        [
+          "risk suffocation infections",
+          0.2376
+        ],
+        [
+          "seeks innovative practical",
+          0.2068
+        ]
+      ],
+      "unique_keywords": [
+        "Solapur Municipal Corporation",
+        "Problem Statement Design",
+        "One-Line Problem Statement",
+        "Statement Design",
+        "Solapur Municipal",
+        "Municipal Corporation",
+        "Description Solapur Municipal",
+        "Municipal Corporation perform",
+        "Municipal Corporation requires",
+        "Design and develop",
+        "sanitation workers solapur",
+        "sewer lines handling",
+        "smc hazardous working",
+        "comprehensive safety support",
+        "manual cleaning maintenance"
+      ]
+    }
+  },
+  "prior_art_comparison": {
+    "ranked_citations": [
+      [
+        1,
+        {
+          "text": "Manual Safety Protocols and SOP-Based Monitoring",
+          "metadata": {
+            "id": "PA5"
+          }
+        },
+        0.11112825024517767
+      ],
+      [
+        2,
+        {
+          "text": "Wearable Safety Devices for Industrial Workers",
+          "metadata": {
+            "id": "PA3"
+          }
+        },
+        0.07277022857578551
+      ],
+      [
+        3,
+        {
+          "text": "Gas Detection and Alarm Systems for Confined Spaces",
+          "metadata": {
+            "id": "PA1"
+          }
+        },
+        0.05758857514694624
+      ],
+      [
+        4,
+        {
+          "text": "Mechanized Sewer Cleaning and Jetting Machines",
+          "metadata": {
+            "id": "PA2"
+          }
+        },
+        0.034778610176316414
+      ],
+      [
+        5,
+        {
+          "text": "CTV and Robotic Sewer Inspection Systems",
+          "metadata": {
+            "id": "PA4"
+          }
+        },
+        0.025027076553248116
+      ],
+      [
+        6,
+        {
+          "text": "Emergency Communication Systems",
+          "metadata": {
+            "id": "PA6"
+          }
+        },
+        0.01377680744033129
+      ]
+    ],
+    "novelty_metrics": {
+      "max_similarity": 0.11112825024517767,
+      "avg_similarity": 0.052511591356300874,
+      "novelty_score": 0.8888717497548223,
+      "avg_novelty": 0.9474884086436991,
+      "num_prior_art": 6
+    },
+    "similarity_method": "tfidf",
+    "total_prior_art": 6
+  },
+  "timestamp": "2026-02-01T11:52:52.800344"
+}
