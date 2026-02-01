@@ -1,0 +1,268 @@
+{
+  "input_metadata": {
+    "filename": "direct_input.txt",
+    "num_pages": 1,
+    "input_length": 763
+  },
+  "analysis": {
+    "original_text": "\n    A novel artificial intelligence system for automated medical diagnosis using deep learning \n    and computer vision. The invention comprises a convolutional neural network architecture \n    that analyzes medical images (X-rays, CT scans, MRIs) to detect abnormalities with 98% \n    accuracy. The system includes a multi-stage pipeline: image preprocessing, feature extraction \n    using transfer learning from pre-trained models, and classification using ensemble methods. \n    The invention also includes an explainability module that highlights regions of interest \n    in the medical images, helping radiologists understand the AI's decision-making process. \n    Applications include early detection of tumors, fractures, and cardiovascular diseases.\n    ",
+    "timestamp": "2026-02-01T11:43:23.020806",
+    "cleaned_text": "a novel artificial intelligence system for automated medical diagnosis using deep learning and computer vision the invention comprises a convolutional neural network architecture that analyzes medical images x rays ct scans mris to detect abnormalities with accuracy the system includes a multi stage pipeline image preprocessing feature extraction using transfer learning from pre trained models and classification using ensemble methods the invention also includes an explainability module that highlights regions of interest in the medical images helping radiologists understand the ai s decision making process applications include early detection of tumors fractures and cardiovascular diseases",
+    "summary": "The invention comprises a convolutional neural network architecture that analyzes medical images (X-rays, CT scans, MRIs) to detect abnormalities with 98% accuracy. The system includes a multi-stage pipeline: image preprocessing, feature extraction using transfer learning from pre-trained models, and classification using ensemble methods. The invention also includes an explainability module that highlights regions of interest in the medical images, helping radiologists understand the AI's decision-making process.",
+    "keywords": {
+      "yake": [
+        [
+          "automated medical diagnosis",
+          0.014532374867334353
+        ],
+        [
+          "artificial intelligence system",
+          0.016681549000595104
+        ],
+        [
+          "computer vision",
+          0.028024788206352808
+        ],
+        [
+          "artificial intelligence",
+          0.0365450278495632
+        ],
+        [
+          "diagnosis using deep",
+          0.0365450278495632
+        ],
+        [
+          "automated medical",
+          0.07103968272863673
+        ],
+        [
+          "medical diagnosis",
+          0.07103968272863673
+        ],
+        [
+          "intelligence system",
+          0.08096397921167203
+        ],
+        [
+          "deep learning",
+          0.08096397921167203
+        ],
+        [
+          "medical images",
+          0.08661358141805799
+        ]
+      ],
+      "rake": [
+        [
+          32.166666666666664,
+          "automated medical diagnosis using deep learning"
+        ],
+        [
+          25.5,
+          "feature extraction using transfer learning"
+        ],
+        [
+          17.0,
+          "classification using ensemble methods"
+        ],
+        [
+          16.0,
+          "convolutional neural network architecture"
+        ],
+        [
+          16.0,
+          "applications include early detection"
+        ],
+        [
+          15.0,
+          "novel artificial intelligence system"
+        ],
+        [
+          9.166666666666666,
+          "analyzes medical images"
+        ],
+        [
+          9.0,
+          "helping radiologists understand"
+        ],
+        [
+          8.0,
+          "invention also includes"
+        ],
+        [
+          6.166666666666666,
+          "medical images"
+        ]
+      ],
+      "keybert": [
+        [
+          "diagnosis using deep",
+          0.6065
+        ],
+        [
+          "radiologists understand ai",
+          0.5763
+        ],
+        [
+          "intelligence automated medical",
+          0.5559
+        ],
+        [
+          "medical images rays",
+          0.5169
+        ],
+        [
+          "convolutional neural network",
+          0.4816
+        ],
+        [
+          "mris detect abnormalities",
+          0.4209
+        ],
+        [
+          "early detection tumors",
+          0.4104
+        ],
+        [
+          "feature extraction",
+          0.3539
+        ],
+        [
+          "pipeline image preprocessing",
+          0.3027
+        ],
+        [
+          "tumors fractures cardiovascular",
+          0.2079
+        ]
+      ],
+      "unique_keywords": [
+        "automated medical diagnosis",
+        "artificial intelligence system",
+        "computer vision",
+        "artificial intelligence",
+        "diagnosis using deep",
+        "automated medical",
+        "medical diagnosis",
+        "intelligence system",
+        "deep learning",
+        "medical images",
+        "radiologists understand ai",
+        "intelligence automated medical",
+        "medical images rays",
+        "convolutional neural network",
+        "mris detect abnormalities"
+      ]
+    }
+  },
+  "prior_art_comparison": {
+    "ranked_citations": [
+      [
+        1,
+        {
+          "text": "Transfer learning approaches for medical image classification tasks using pre-trained convolutional neural networks.",
+          "metadata": {
+            "id": "PA007",
+            "year": 2020,
+            "source": "Patent Database"
+          }
+        },
+        0.17551679015184174
+      ],
+      [
+        2,
+        {
+          "text": "A deep learning system for medical image classification using convolutional neural networks to identify pathologies in radiological images.",
+          "metadata": {
+            "id": "PA001",
+            "year": 2019,
+            "source": "Patent Database"
+          }
+        },
+        0.17043330991439437
+      ],
+      [
+        3,
+        {
+          "text": "Automated detection of cardiovascular diseases using deep neural networks trained on cardiac imaging data.",
+          "metadata": {
+            "id": "PA005",
+            "year": 2021,
+            "source": "Patent Database"
+          }
+        },
+        0.12994854708127251
+      ],
+      [
+        4,
+        {
+          "text": "Computer-aided diagnosis system for analyzing chest X-rays with artificial intelligence to detect pulmonary diseases.",
+          "metadata": {
+            "id": "PA003",
+            "year": 2021,
+            "source": "Patent Database"
+          }
+        },
+        0.10978073855387009
+      ],
+      [
+        5,
+        {
+          "text": "Ensemble methods for improving accuracy in diagnostic AI systems combining multiple machine learning models.",
+          "metadata": {
+            "id": "PA008",
+            "year": 2021,
+            "source": "Patent Database"
+          }
+        },
+        0.09103483614117468
+      ],
+      [
+        6,
+        {
+          "text": "Methods for tumor detection in radiological images using machine learning algorithms and pattern recognition techniques.",
+          "metadata": {
+            "id": "PA002",
+            "year": 2020,
+            "source": "Patent Database"
+          }
+        },
+        0.07367835237266541
+      ],
+      [
+        7,
+        {
+          "text": "Explainable AI framework for medical image analysis providing interpretable decision support for clinical diagnosis.",
+          "metadata": {
+            "id": "PA004",
+            "year": 2022,
+            "source": "Patent Database"
+          }
+        },
+        0.06148730208813048
+      ],
+      [
+        8,
+        {
+          "text": "Image processing system for enhancing quality of medical scans using digital filtering and enhancement algorithms.",
+          "metadata": {
+            "id": "PA006",
+            "year": 2018,
+            "source": "Patent Database"
+          }
+        },
+        0.058682126116114904
+      ]
+    ],
+    "novelty_metrics": {
+      "max_similarity": 0.17551679015184174,
+      "avg_similarity": 0.10882025030243303,
+      "novelty_score": 0.8244832098481583,
+      "avg_novelty": 0.891179749697567,
+      "num_prior_art": 8
+    },
+    "similarity_method": "tfidf",
+    "total_prior_art": 8
+  },
+  "timestamp": "2026-02-01T11:43:27.204175"
+}
