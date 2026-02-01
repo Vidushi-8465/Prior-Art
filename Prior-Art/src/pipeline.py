@@ -1,345 +1,275 @@
 """
-Prior Art Search Pipeline
---------------------------
-Main pipeline that integrates all components for end-to-end prior art analysis.
+Enhanced Patent Analysis Pipeline
+----------------------------------
+Takes PDF input, extracts metadata, keywords with expansions, and outputs CSV.
 """
 
 import os
-import json
-from typing import List, Dict, Optional, Union
+from typing import List, Dict
 from datetime import datetime
 
-from pdf_extractor import PDFExtractor
+from patent_pdf_extractor import PatentPDFExtractor
 from preprocessing import TextPreprocessor
-from summarization import TextSummarizer, ModernTextSummarizer
+from summarization import ModernTextSummarizer
 from keyword_extraction import KeywordExtractor
-from similarity_ranking import CitationRanker
+from keyword_expander import KeywordExpander
+from csv_output_generator import CSVOutputGenerator
 
 
-class PriorArtPipeline:
+class PatentAnalysisPipeline:
     """
-    Complete pipeline for prior art search and analysis.
+    Complete pipeline for patent PDF analysis with CSV output.
     
     Workflow:
-    1. Extract text from PDF or accept direct input
-    2. Preprocess and clean the text
-    3. Summarize the invention description
+    1. Extract text and metadata from PDF
+    2. Preprocess text
+    3. Generate summary
     4. Extract keywords
-    5. Compare against prior art corpus
-    6. Rank results by similarity
-    7. Generate novelty report
+    5. Expand keywords with synonyms/full forms
+    6. Generate CSV output
     """
     
     def __init__(self, output_dir: str = "../data/output"):
         """
-        Initialize the pipeline with all components.
+        Initialize the pipeline.
         
         Args:
-            output_dir: Directory to save results
+            output_dir: Directory to save output files
         """
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
         
-        # Initialize all components
-        print("Initializing pipeline components...")
-        self.pdf_extractor = PDFExtractor()
+        print("Initializing Patent Analysis Pipeline...")
+        self.pdf_extractor = PatentPDFExtractor()
         self.preprocessor = TextPreprocessor()
         self.summarizer = ModernTextSummarizer()
         self.keyword_extractor = KeywordExtractor()
-        self.citation_ranker = CitationRanker()
+        self.keyword_expander = KeywordExpander()
+        self.csv_generator = CSVOutputGenerator()
         print("Pipeline ready!\n")
     
-    def process_input(self, 
-                      input_data: Union[str, Dict],
-                      is_file: bool = False) -> Dict:
+    def analyze_single_pdf(self, pdf_path: str, num_keywords: int = 15) -> Dict:
         """
-        Process input text or PDF file.
+        Analyze a single patent PDF.
         
         Args:
-            input_data: Either text string or file path
-            is_file: True if input_data is a file path
+            pdf_path: Path to PDF file
+            num_keywords: Number of keywords to extract
             
         Returns:
-            Dictionary with extracted text and metadata
+            Dictionary with all analysis results
         """
-        if is_file:
-            # Extract from PDF
-            result = self.pdf_extractor.extract(input_data, method="pdfplumber")
+        print(f"\nAnalyzing: {os.path.basename(pdf_path)}")
+        print("-" * 70)
+        
+        # Step 1: Extract PDF content and metadata
+        print("Step 1: Extracting PDF content...")
+        pdf_data = self.pdf_extractor.extract_all(pdf_path)
+        
+        text = pdf_data['text']
+        if not text or len(text) < 100:
+            print("  Warning: Extracted text is too short!")
+            return None
+        
+        print(f"  ✓ Extracted {len(text)} characters from {pdf_data['num_pages']} pages")
+        print(f"  ✓ Title: {pdf_data['title'][:80] if pdf_data['title'] else 'Not found'}...")
+        print(f"  ✓ Year: {pdf_data['publication_year'] or 'Not found'}")
+        print(f"  ✓ IPC Codes: {len(pdf_data['ipc_codes'])} found")
+        print(f"  ✓ CPC Codes: {len(pdf_data['cpc_codes'])} found")
+        print(f"  ✓ Citations: {len(pdf_data['citations'])} found")
+        
+        # Step 2: Generate summary
+        print("\nStep 2: Generating summary...")
+        if pdf_data['abstract']:
+            summary = pdf_data['abstract']
+            print("  ✓ Using extracted abstract as summary")
         else:
-            # Direct text input
-            result = self.pdf_extractor.extract_from_text_input(input_data)
+            # Use first ~1000 chars for summary if no abstract
+            summary_text = text[:1000] if len(text) > 1000 else text
+            summary = self.summarizer.summarize_with_textrank(summary_text, sentence_count=3)
+            print("  ✓ Generated summary from text")
+        
+        # Step 3: Extract keywords
+        print("\nStep 3: Extracting keywords...")
+        try:
+            # Use combined approach for best results
+            keywords_dict = self.keyword_extractor.extract_combined(text, top_n=num_keywords)
+            keywords_list = self.keyword_extractor.get_unique_keywords(keywords_dict, top_n=num_keywords)
+            print(f"  ✓ Extracted {len(keywords_list)} keywords")
+        except Exception as e:
+            print(f"  Warning: Keyword extraction error: {e}")
+            # Fallback to YAKE only
+            try:
+                keywords_yake = self.keyword_extractor.extract_with_yake(text, top_n=num_keywords)
+                keywords_list = [kw for kw, score in keywords_yake]
+                print(f"  ✓ Extracted {len(keywords_list)} keywords (YAKE only)")
+            except:
+                keywords_list = []
+                print("  ✗ Could not extract keywords")
+        
+        # Step 4: Expand keywords with synonyms/full forms
+        print("\nStep 4: Expanding keywords...")
+        expanded_keywords = self.keyword_expander.expand_keywords(keywords_list, text)
+        keywords_formatted = self.keyword_expander.format_expanded_keywords(expanded_keywords)
+        print(f"  ✓ Expanded {len(expanded_keywords)} keywords")
+        
+        # Compile results
+        result = {
+            'filename': pdf_data['filename'],
+            'filepath': pdf_path,
+            'title': pdf_data['title'] or '',
+            'abstract': pdf_data['abstract'] or summary,
+            'summary': summary,
+            'publication_year': pdf_data['publication_year'] or '',
+            'ipc_codes': pdf_data['ipc_codes'],
+            'cpc_codes': pdf_data['cpc_codes'],
+            'keywords': keywords_list,
+            'keywords_expanded': expanded_keywords,
+            'keywords_formatted': keywords_formatted,
+            'citations': pdf_data['citations'],
+            'num_pages': pdf_data['num_pages'],
+            'text_length': len(text)
+        }
+        
+        print("\n✓ Analysis complete!")
         
         return result
     
-    def analyze_invention(self,
-                         invention_text: str,
-                         summarize: bool = True,
-                         extract_keywords: bool = True) -> Dict:
+    def analyze_multiple_pdfs(self, pdf_paths: List[str], num_keywords: int = 15) -> List[Dict]:
         """
-        Analyze an invention description.
+        Analyze multiple patent PDFs.
         
         Args:
-            invention_text: The invention description text
-            summarize: Whether to generate a summary
-            extract_keywords: Whether to extract keywords
+            pdf_paths: List of paths to PDF files
+            num_keywords: Number of keywords to extract per document
             
         Returns:
-            Dictionary with analysis results
+            List of analysis results
         """
-        results = {
-            'original_text': invention_text,
-            'timestamp': datetime.now().isoformat()
-        }
+        results = []
         
-        # Step 1: Preprocess
-        print("Step 1: Preprocessing text...")
-        cleaned_text = self.preprocessor.clean_text(invention_text)
-        preprocessed_text = self.preprocessor.preprocess(
-            invention_text, 
-            lemmatize=False,  # Keep original for summary
-            remove_stopwords=False
-        )
-        results['cleaned_text'] = cleaned_text
+        print("="*70)
+        print(f"PATENT ANALYSIS PIPELINE - {len(pdf_paths)} DOCUMENTS")
+        print("="*70)
         
-        # Step 2: Summarize
-        if summarize:
-            print("Step 2: Generating summary...")
-            summary = self.summarizer.summarize_with_textrank(
-                invention_text, 
-                sentence_count=3
-            )
-            results['summary'] = summary
-        
-        # Step 3: Extract keywords
-        if extract_keywords:
-            print("Step 3: Extracting keywords...")
-            keywords_combined = self.keyword_extractor.extract_combined(
-                invention_text, 
-                top_n=10
-            )
+        for i, pdf_path in enumerate(pdf_paths, 1):
+            print(f"\n[{i}/{len(pdf_paths)}] Processing...")
             
-            # Get unique keywords
-            unique_keywords = self.keyword_extractor.get_unique_keywords(
-                keywords_combined, 
-                top_n=15
-            )
-            
-            results['keywords'] = {
-                'yake': keywords_combined.get('yake', []),
-                'rake': keywords_combined.get('rake', []),
-                'keybert': keywords_combined.get('keybert', []),
-                'unique_keywords': unique_keywords
-            }
+            try:
+                result = self.analyze_single_pdf(pdf_path, num_keywords)
+                if result:
+                    results.append(result)
+            except Exception as e:
+                print(f"  ✗ Error: {e}")
+                continue
         
         return results
     
-    def compare_with_prior_art(self,
-                               invention_text: str,
-                               prior_art_documents: List[Dict[str, str]],
-                               method: str = "hybrid",
-                               top_n: int = 10) -> Dict:
+    def generate_output_csv(self, results: List[Dict], output_filename: str = None) -> str:
         """
-        Compare invention with prior art and rank results.
+        Generate CSV output from results.
         
         Args:
-            invention_text: The invention description
-            prior_art_documents: List of prior art documents with 'text' and 'metadata'
-            method: Similarity method ('tfidf', 'bert', or 'hybrid')
-            top_n: Number of top results to return
+            results: List of analysis results
+            output_filename: Custom output filename (optional)
             
         Returns:
-            Dictionary with ranking results and novelty score
+            Path to generated CSV file
         """
-        print(f"\nStep 4: Comparing with {len(prior_art_documents)} prior art documents...")
+        if not results:
+            print("No results to save!")
+            return None
         
-        # Rank documents
-        ranked_results = self.citation_ranker.rank_documents(
-            invention_text,
-            prior_art_documents,
-            method=method,
-            top_n=top_n
-        )
+        if output_filename is None:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            output_filename = f"patent_analysis_{timestamp}.csv"
         
-        # Compute novelty score
-        prior_art_texts = [doc['text'] for doc in prior_art_documents]
-        novelty_metrics = self.citation_ranker.compute_novelty_score(
-            invention_text,
-            prior_art_texts,
-            method=method
-        )
+        output_path = os.path.join(self.output_dir, output_filename)
         
-        return {
-            'ranked_citations': ranked_results,
-            'novelty_metrics': novelty_metrics,
-            'similarity_method': method,
-            'total_prior_art': len(prior_art_documents)
-        }
+        # Generate CSV
+        csv_path = self.csv_generator.generate_csv(results, output_path)
+        
+        # Print summary
+        self.csv_generator.print_summary(csv_path, results)
+        
+        return csv_path
     
-    def run_full_pipeline(self,
-                         invention_input: Union[str, Dict],
-                         prior_art_docs: List[Dict[str, str]],
-                         is_file: bool = False,
-                         similarity_method: str = "hybrid",
-                         save_results: bool = True) -> Dict:
+    def run_pipeline(self, 
+                     pdf_paths: List[str], 
+                     num_keywords: int = 15,
+                     output_filename: str = None) -> str:
         """
-        Run the complete prior art search pipeline.
+        Run the complete pipeline: PDF input → Analysis → CSV output.
         
         Args:
-            invention_input: Invention text or PDF path
-            prior_art_docs: List of prior art documents
-            is_file: True if invention_input is a file path
-            similarity_method: Method for similarity computation
-            save_results: Whether to save results to file
+            pdf_paths: List of PDF file paths (can be single file or multiple)
+            num_keywords: Number of keywords to extract
+            output_filename: Custom output filename
             
         Returns:
-            Complete analysis results
+            Path to generated CSV file
         """
+        # Handle single PDF input
+        if isinstance(pdf_paths, str):
+            pdf_paths = [pdf_paths]
+        
+        # Analyze all PDFs
+        results = self.analyze_multiple_pdfs(pdf_paths, num_keywords)
+        
+        # Generate CSV output
+        csv_path = self.generate_output_csv(results, output_filename)
+        
+        return csv_path
+    
+    def print_result_preview(self, result: Dict):
+        """
+        Print a formatted preview of analysis results.
+        
+        Args:
+            result: Analysis result dictionary
+        """
+        print("\n" + "="*70)
+        print("ANALYSIS PREVIEW")
         print("="*70)
-        print("PRIOR ART SEARCH PIPELINE")
-        print("="*70 + "\n")
         
-        # Process input
-        print("Processing input...")
-        input_data = self.process_input(invention_input, is_file=is_file)
-        invention_text = input_data['text']
+        print(f"\nFile: {result['filename']}")
+        print(f"Title: {result['title']}")
+        print(f"Year: {result['publication_year']}")
         
-        # Analyze invention
-        analysis_results = self.analyze_invention(
-            invention_text,
-            summarize=True,
-            extract_keywords=True
-        )
+        print(f"\nAbstract:")
+        print(f"  {result['abstract'][:200]}...")
         
-        # Compare with prior art
-        comparison_results = self.compare_with_prior_art(
-            invention_text,
-            prior_art_docs,
-            method=similarity_method,
-            top_n=10
-        )
+        print(f"\nIPC Codes ({len(result['ipc_codes'])}):")
+        print(f"  {', '.join(result['ipc_codes'][:5])}")
         
-        # Combine all results
-        final_results = {
-            'input_metadata': {
-                'filename': input_data.get('filename', 'direct_input'),
-                'num_pages': input_data.get('num_pages', 1),
-                'input_length': len(invention_text)
-            },
-            'analysis': analysis_results,
-            'prior_art_comparison': comparison_results,
-            'timestamp': datetime.now().isoformat()
-        }
+        print(f"\nCPC Codes ({len(result['cpc_codes'])}):")
+        print(f"  {', '.join(result['cpc_codes'][:5])}")
         
-        # Save results
-        if save_results:
-            output_file = os.path.join(
-                self.output_dir, 
-                f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            )
-            with open(output_file, 'w') as f:
-                json.dump(final_results, f, indent=2, default=str)
-            print(f"\nResults saved to: {output_file}")
+        print(f"\nKeywords ({len(result['keywords'])}):")
+        for i, (kw, expansions) in enumerate(result['keywords_expanded'][:10], 1):
+            if len(expansions) > 1:
+                print(f"  {i}. {kw} → {', '.join(expansions[1:])}")
+            else:
+                print(f"  {i}. {kw}")
         
-        return final_results
-    
-    def print_results(self, results: Dict):
-        """
-        Pretty print the analysis results.
+        print(f"\nCitations ({len(result['citations'])}):")
+        print(f"  {', '.join(result['citations'][:10])}")
         
-        Args:
-            results: Results dictionary from run_full_pipeline
-        """
-        print("\n" + "="*70)
-        print("ANALYSIS RESULTS")
-        print("="*70 + "\n")
-        
-        # Summary
-        if 'summary' in results['analysis']:
-            print("SUMMARY:")
-            print(results['analysis']['summary'])
-            print("\n" + "-"*70 + "\n")
-        
-        # Keywords
-        if 'keywords' in results['analysis']:
-            print("TOP KEYWORDS:")
-            for i, kw in enumerate(results['analysis']['keywords']['unique_keywords'], 1):
-                print(f"  {i:2d}. {kw}")
-            print("\n" + "-"*70 + "\n")
-        
-        # Novelty Score
-        novelty = results['prior_art_comparison']['novelty_metrics']
-        print("NOVELTY ASSESSMENT:")
-        print(f"  Novelty Score: {novelty['novelty_score']:.2%}")
-        print(f"  Max Similarity to Prior Art: {novelty['max_similarity']:.2%}")
-        print(f"  Average Similarity: {novelty['avg_similarity']:.2%}")
-        
-        if novelty['novelty_score'] > 0.7:
-            assessment = "HIGH - Significantly different from prior art"
-        elif novelty['novelty_score'] > 0.4:
-            assessment = "MODERATE - Some similarities exist"
-        else:
-            assessment = "LOW - Very similar to existing prior art"
-        print(f"  Assessment: {assessment}")
-        print("\n" + "-"*70 + "\n")
-        
-        # Top Citations
-        print("TOP 5 MOST SIMILAR PRIOR ART:")
-        ranked = results['prior_art_comparison']['ranked_citations'][:5]
-        for rank, doc, score in ranked:
-            print(f"\n  Rank {rank} | Similarity: {score:.2%}")
-            print(f"  {doc['text'][:150]}...")
-        
-        print("\n" + "="*70)
+        print("="*70)
 
 
 if __name__ == "__main__":
     # Example usage
-    pipeline = PriorArtPipeline(output_dir="../data/output")
+    pipeline = PatentAnalysisPipeline(output_dir="../data/output")
     
-    # Sample invention description
-    invention_description = """
-    A novel system and method for real-time emotion detection in video calls using 
-    deep learning. The system employs a convolutional neural network to analyze 
-    facial expressions and voice patterns simultaneously. The invention includes a 
-    multimodal fusion architecture that combines visual and audio features to 
-    achieve 95% accuracy in emotion classification. The system can detect seven 
-    basic emotions: happiness, sadness, anger, surprise, fear, disgust, and neutral. 
-    Applications include mental health monitoring, customer service quality 
-    assessment, and virtual therapy sessions.
-    """
+    # Example: Analyze a single PDF
+    # csv_path = pipeline.run_pipeline("path/to/patent.pdf")
     
-    # Sample prior art (in real scenario, this would be from a database)
-    prior_art = [
-        {
-            'text': 'A facial recognition system using convolutional neural networks for security applications.',
-            'metadata': {'id': 'P001', 'year': 2020}
-        },
-        {
-            'text': 'Methods for emotion detection from speech signals using machine learning algorithms.',
-            'metadata': {'id': 'P002', 'year': 2019}
-        },
-        {
-            'text': 'Real-time video analysis system for detecting human emotions using deep learning.',
-            'metadata': {'id': 'P003', 'year': 2021}
-        },
-        {
-            'text': 'Multimodal sentiment analysis combining text, audio and video features.',
-            'metadata': {'id': 'P004', 'year': 2022}
-        },
-        {
-            'text': 'Image classification system using neural networks for medical diagnosis.',
-            'metadata': {'id': 'P005', 'year': 2018}
-        }
-    ]
+    # Example: Analyze multiple PDFs
+    # pdf_files = ["patent1.pdf", "patent2.pdf", "patent3.pdf"]
+    # csv_path = pipeline.run_pipeline(pdf_files, num_keywords=15)
     
-    # Run pipeline
-    results = pipeline.run_full_pipeline(
-        invention_input=invention_description,
-        prior_art_docs=prior_art,
-        is_file=False,
-        similarity_method="tfidf",  # Use 'hybrid' for best results
-        save_results=True
-    )
-    
-    # Print results
-    pipeline.print_results(results)
+    print("Patent Analysis Pipeline ready!")
+    print("\nUsage:")
+    print("  pipeline.run_pipeline('path/to/patent.pdf')")
+    print("  pipeline.run_pipeline(['file1.pdf', 'file2.pdf'])")
