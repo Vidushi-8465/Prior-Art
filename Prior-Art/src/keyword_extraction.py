@@ -173,19 +173,27 @@ class KeywordExtractor:
         """
         all_keywords = []
         for method, keywords in keyword_lists.items():
-            all_keywords.extend([kw for kw, score in keywords])
+            for item in keywords:
+                # Handle both tuple and other formats
+                if isinstance(item, tuple) and len(item) >= 2:
+                    kw = item[0]
+                    if isinstance(kw, str):
+                        all_keywords.append(kw)
+                elif isinstance(item, str):
+                    all_keywords.append(item)
         
         # Remove duplicates while preserving order
         seen = set()
         unique_keywords = []
         for kw in all_keywords:
-            kw_lower = kw.lower()
-            if kw_lower not in seen:
-                seen.add(kw_lower)
-                unique_keywords.append(kw)
-            
-            if len(unique_keywords) >= top_n:
-                break
+            if isinstance(kw, str):
+                kw_lower = kw.lower()
+                if kw_lower not in seen:
+                    seen.add(kw_lower)
+                    unique_keywords.append(kw)
+                
+                if len(unique_keywords) >= top_n:
+                    break
         
         return unique_keywords
 
