@@ -35,7 +35,7 @@ class CSVOutputGenerator:
         # Ensure directory exists
         os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else '.', exist_ok=True)
         
-        # CSV headers
+        # CSV headers - NOW INCLUDES SUMMARY
         headers = [
             'title',
             'abstract',
@@ -43,7 +43,8 @@ class CSVOutputGenerator:
             'cpc_codes',
             'keywords',
             'citations',
-            'publication_year'
+            'publication_year',
+            'summary'
         ]
         
         with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
@@ -59,7 +60,8 @@ class CSVOutputGenerator:
                     'cpc_codes': ', '.join(result.get('cpc_codes', [])) if result.get('cpc_codes') else '',
                     'keywords': result.get('keywords_formatted', ''),
                     'citations': ', '.join(result.get('citations', [])) if result.get('citations') else '',
-                    'publication_year': result.get('publication_year', '')
+                    'publication_year': result.get('publication_year', ''),
+                    'summary': result.get('summary', '')
                 }
                 
                 writer.writerow(row)
@@ -168,7 +170,7 @@ if __name__ == "__main__":
             'publication_year': '2024',
             'filename': 'patent1.pdf',
             'num_pages': 20,
-            'summary': 'This invention relates to automated text processing.'
+            'summary': 'This invention relates to automated text processing using ML algorithms for enhanced accuracy.'
         }
     ]
     

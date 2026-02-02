@@ -10,7 +10,7 @@ import sys
 # Add src directory to path
 sys.path.insert(0, os.path.dirname(__file__))
 
-from enhanced_pipeline import PatentAnalysisPipeline
+from pipeline import PatentAnalysisPipeline
 
 
 def print_header(text):
