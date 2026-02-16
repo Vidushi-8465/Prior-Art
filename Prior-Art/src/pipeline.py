@@ -14,7 +14,7 @@ from summarization import ModernTextSummarizer
 from keyword_extraction import KeywordExtractor
 from keyword_expander import KeywordExpander
 from csv_output_generator import CSVOutputGenerator
-
+# Similarity ranking 
 
 class PatentAnalysisPipeline:
     """

@@ -378,7 +378,7 @@ If something doesn't work:
 2. Verify PDF is not corrupted
 3. Look at error message
 4. Try with a different PDF first
-
+5. if genism is not working install sumy 
 ---
 
 ## ✅ Checklist
